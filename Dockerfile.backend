@@ -1,0 +1,22 @@
+# --- Etape 1 : Clonage et Build du Backend ---
+FROM maven:3.9-eclipse-temurin-11 AS build
+WORKDIR /app
+
+# Installation de git pour cloner le depot public
+RUN apt-get update && apt-get install -y git
+
+# Remplacer l'URL ci-dessous par l'URL HTTPS de votre depot public backend
+RUN git clone https://github.com/java-playground-of-css/Todo-REST-API-Spring-Boot.git .
+
+# Compilation du projet Spring Boot (en ignorant les tests pour aller plus vite)
+RUN mvn clean package -DskipTests
+
+# --- Etape 2 : Execution de l'application ---
+FROM eclipse-temurin:11-jre-alpine
+WORKDIR /app
+
+# Recuperation du fichier .jar compile depuis l'etape precedente
+COPY --from=build /app/target/*.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]

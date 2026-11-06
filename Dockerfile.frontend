@@ -1,0 +1,31 @@
+# --- Etape 1 : Clonage et Build du Frontend Angular ---
+FROM node:20-alpine AS build
+WORKDIR /app
+
+ARG APP_VERSION=todolist-feature
+
+# Installation de git
+RUN apk add --no-cache git
+
+# Remplacer l'URL ci-dessous par l'URL HTTPS de votre depot public frontend
+RUN git clone --branch ${APP_VERSION} --depth 1 https://github.com/js-playground-of-css/ng-playground-app.git .
+
+# Installation des dependances et build de production
+RUN npm install
+RUN npm run build -- --configuration=production
+
+# --- Etape 2 : Image Finale ---
+FROM almalinux:9-minimal
+
+RUN microdnf install -y nginx && \
+    microdnf clean all
+
+# COPIER la configuration du serveur web
+COPY nginx.conf /etc/nginx/conf.d/angular.conf
+
+# On recupere le resultat du build de l'etape precedente
+COPY --from=build /app/dist/ng-playground-app/browser /usr/share/nginx/html
+
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
