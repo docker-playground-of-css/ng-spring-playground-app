@@ -3,7 +3,7 @@
 
 ## Objectifs
 
-L'objectif de ce dépôt est de faire communique le front avec le back ! Les deux projets étant sur des dépôts GitHub différents.
+L'objectif de ce dépôt est de faire communiquer le front avec le back ! Les deux projets étant sur des dépôts GitHub différents.
 
 ## Dépots relatifs
 
